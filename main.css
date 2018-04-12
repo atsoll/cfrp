@@ -1,0 +1,155 @@
+.item {
+  font-size: 1.5em;
+}
+
+#graph {
+  margin: 1em;
+}
+
+.axis {
+  stroke: #000;
+  stroke-width: 0.5px;
+}
+
+.node {
+  stroke: #000;
+}
+
+.link {
+  fill: none;
+  stroke: #999 !important;
+  stroke-width: 1.5px;
+  stroke-opacity: .3;
+}
+
+.link.active {
+  stroke: red !important;
+  stroke-width: 2px;
+  stroke-opacity: 1;
+}
+
+.node.active {
+  stroke: red !important;
+  stroke-width: 3px;
+}
+
+svg {
+  z-index: -1;
+}
+
+#infoPopup {
+  z-index: 1000;
+  position: absolute;
+  left: 1.5em;
+  top: 1.5em;
+}
+
+#dateSelect {
+  z-index: 1000;
+  position: absolute;
+  right: 1.5em;
+  top: 1em;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.donut-label{
+  font-size: 200% !important;
+}
+
+span.green {
+  margin-top:12px;
+  background: #5EA226;
+  border-radius: 1em;
+  -moz-border-radius: 1em;
+  -webkit-border-radius: 1em;
+  color: #ffffff;
+  margin-left: 120px;
+  display: inline-block;
+  font-weight: bold;
+  font-size: 24pt;
+  line-height: 2em;
+  margin-right: 15px;
+  text-align: center;
+  width: 2em;
+}
+
+span.purple {
+  margin-top:12px;
+  background: #a239cd;
+  border-radius: 1em;
+  -moz-border-radius: 1em;
+  -webkit-border-radius: 1em;
+  color: #ffffff;
+  margin-left: 120px;
+  display: block;
+  font-weight: bold;
+  font-size: 24pt;
+  line-height: 2em;
+  margin-right: 15px;
+  text-align: center;
+  width: 2em;
+}
+
+span.red {
+  margin-top:12px;
+  background: #d62728;
+  border-radius: 1em;
+  -moz-border-radius: 1em;
+  -webkit-border-radius: 1em;
+  color: #ffffff;
+  margin-left: 120px;
+  display: block;
+  font-weight: bold;
+  font-size: 24pt;
+  line-height: 2em;
+  margin-right: 15px;
+  text-align: center;
+  width: 2em;
+}
+
+.node:hover {
+  cursor: pointer;
+}
+
+.bar {
+  fill: #9467bd;
+}
+
+.legend-key{
+  padding-left: 15px;
+}
+
+#tooltip {
+    position: absolute;
+    width: 200px;
+    height: auto;
+    padding: 10px;
+    background-color: #999;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    z-index: 100 !important;
+
+
+}
+#genreTooltip {
+    position: absolute;
+    width: 200px;
+    height: auto;
+    padding: 10px;
+    background-color: #999;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    z-index: 100 !important;
+
+
+}
+#tooltip.hidden {
+    opacity: 0;
+}
+
+#value {
+  color: #000 !important;
+}

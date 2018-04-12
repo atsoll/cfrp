@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>InfoVis</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" type="text/css" href="semantic/semantic.min.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="semantic/semantic.min.js"></script>
+  <script src="https://d3js.org/d3.v4.min.js" ></script>
+  <script src="d3.hive.min.js"></script>
+  <script src="main.js"></script>
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="ui secondary pointing menu">
+    <div id="label" class="item">
+      <i class="book icon"></i>
+      VisWithUs
+    </div>
+    <a class="item active">Home</a>
+  </div>
+
+  <!-- Statistics header -->
+  <div class="ui five statistics">
+  </div>
+
+  <!-- Graph -->
+  <div id="graph" class="ui padded segment">
+    <!-- Popup info -->
+    <div id="infoPopup" class="ui huge labels">
+    </div>
+
+    <!-- Date selection -->
+    <div id="dateSelect" class="ui two column grid segment" hidden>
+      <div class="column">
+          <div>From:</div>
+          <select id="minDate" class="ui scrolling dropdown">
+          </select>
+      </div>
+      <div class="column">
+          <div>To:</div>
+          <select id="maxDate" class="ui scrolling dropdown">
+          </select>
+      </div>
+    </div>
+
+    <div class="ui active text centered inline loader">Loading</div>
+    <svg id="hive-plot"></svg>
+  </div>
+
+  <!-- Modal -->
+  <!-- <button class="ui primary button" onclick="showModal()" style="margin-left: 1em">
+    Show Modal
+  </button> -->
+
+  <div class="ui basic large modal">
+    <div class="ui icon header">
+      <i class="archive icon"></i>
+      Comédie-Française Dataset
+    </div>
+    <div class="content">
+      <div class="ui active text centered inline loader">Loading</div>
+      <div class="ui inverted five statistics"></div>
+    </div>
+    <div class="actions">
+      <div class="ui basic cancel inverted button">
+        <i class="remove icon"></i>
+        Close
+      </div>
+      <div class="ui green ok inverted button">
+        <i class="checkmark icon"></i>
+        Okay
+      </div>
+    </div>
+  </div>
+
+  <div id="playmodal" class="ui basic large modal">
+    <i class="close icon"></i>
+    <div class="header modal-title">
+      {title}
+    </div>
+    <div class="content">
+      <div class="ui two doubling cards">
+        <div class="card">
+          <div class="content">
+            <div class="header">Play Popularity Rank</div>
+            <div id="playRankGenre" ></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="content">
+            <div class="header">Play Popularity Rank</div>
+            <div id="playRankAuthor" ></div>
+          </div>
+        </div>
+        <div class="card fluid card">
+          <div class="content">
+            <div class="header">Popularity across Days of the Week</div>
+            <div class="meta">Based on ticket sale revenue</div>
+            <svg id="playPieChart" style="margin-left: -2.5em"></svg>
+            <!--div id="tooltip" class="hidden">
+               <p><span id="value"></span></p>
+            </div-->
+            <svg id="pieLegend"></svg>
+          </div>
+        </div>
+        <div class="ui card fluid card">
+          <div class="content" style="overflow:visible">
+            <div class="header">Top plays played in the same session</div>
+            <div class="meta">Based on number of co-occurences</div>
+            <div id="play-bar-chart"></div>
+            <svg id="genreLegend"></svg>
+          </div>
+        </div>
+      </div>
+      <div class="ui card fluid card">
+        <div class="content">
+          <div class="header">Ticket sale trends over time</div>
+          <div class="meta">Based on number of tickets sold</div>
+          <svg id="ticketSales"></svg>
+          <svg id="levelLegend"></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="genremodal" class="ui basic large modal">
+    <i class="close icon"></i>
+    <div class="header modal">
+      Genre: <span id="genreName">{genre}</span>
+    </div>
+    <div class="content">
+      <div class="ui two doubling cards">
+          <div class="card">
+            <div class="content">
+              <div class="header">Most Popular Plays</div>
+              <div class="meta">Based on total box office success</div>
+              <!-- Put top 5 in here -->
+              <ol id="top5plays" class="ui ordered list"></ol>
+            </div>
+          </div>
+          <div class="card">
+            <div class="content">
+              <div class="header">Most Popular Authors</div>
+              <div class="meta">Based on their plays of this genre's total box office success</div>
+              <!-- Put top 5 in here -->
+              <ol id="top5authors" class="ui ordered list"></ol>
+            </div>
+          </div>
+      </div>
+      <div class="ui two doubling cards">
+        <div class="ui fluid card">
+          <div class="content">
+            <div class="header">Distribution</div>
+            <div class="meta">Proportion of plays of this genre (red)</div>
+            <!-- Put the svg stuff in here -->
+            <svg id="pieChart"></svg>
+            <!--div id="genreTooltip" class="hidden">
+               <p><span id="value"></span></p>
+            </div!-->
+          </div>
+        </div>
+        <div class="ui fluid card">
+          <div class="content">
+            <div class="header">Popularity over time</div>
+            <div class="meta">Based on number of performances each year</div>
+            <!-- Put the svg stuff in here -->
+            <svg id="genreLineChart"></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="authormodal" class="ui basic large modal">
+    <i class="close icon"></i>
+    <div class="header modal">
+      Author: <span id="authorName">{author}</span>
+    </div>
+    <div class="content">
+      <div class="ui cards two column grid">
+        <div class="ui card">
+          <div class="content">
+            <div class="header">Popularity Rank</div>
+            <div class="meta">Based on total ticket sales among other authors</div>
+            <span class="green" id="author-rank">#</span><span style="color: rgba(54, 69, 79, 0.82);"id="author-popularity-outof-label">out of </span>
+          </div>
+        </div>
+        <div class="ui card">
+          <div class="content">
+            <div class="header">Number of Plays Written</div>
+            <div class="meta">Across all seasons</div>
+            <span class="red" id="num-plays">#</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="ui cards two column grid">
+        <div class="ui fluid centered card">
+          <div class="content">
+            <div class="header">Genre Distribution</div>
+            <div class="meta">Distribution of genres in author's written plays</div>
+            <svg id="author-donut-chart"></svg>
+            <svg id="author-donut-chart-legend"></svg>
+          </div>
+        </div>
+        <div class="card">
+          <div class="content">
+            <div class="header">Play Success</div>
+            <div class="meta">Top 5 plays based on total tickets sold</div>
+            <div id="author-bar-chart"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
