@@ -289,36 +289,38 @@ function getPlayPopupFunction(play) {
 
 function getGenreModalFunction(genre) {
   const playsGenre = plays.filter( p => p.genre === genre);
-
-  const top5elems = playsGenre
-    .sort( (a, b) => b.total_sold - a.total_sold )
-    .slice(0, 5)
+  const playTitles = playsGenre.map(x=>x.title);
+  const playRev = playTotals.filter(p => playTitles.indexOf(p.title) > -1).sort(((a,b)=> b.total-a.total)).slice(0,5);
+  const top5elems = playRev
     .map( play => {
       const header = $('<div></div>').addClass('header').text(play.title)
       const meta = $('<div></div>').addClass('meta').append(
-        $('<span></span>').addClass(['right', 'floated']).text(`${play.total_sold} sold`),
-        $('<span></span>').addClass('category').text(play.author)
+        $('<span></span>').addClass(['right', 'floated']).text(`${play.total} livres`),
+        $('<span></span>').addClass('category').text(playsGenre[playTitles.indexOf(play.title)].author)
       )
       return $('<li></li>').addClass('item').append(header, meta);
     });
 
+
   const top5auths =  unique.authors
     .map( author => {
       const authorsPlays = playsGenre.filter( p => p.author === author )
+      const authorPlayRevs = playTotals.filter(p=> authorsPlays.map(x=>x.title).indexOf(p.title) > -1);
       return {
         name: author,
-        count: authorsPlays.length,
-        sold: authorsPlays.reduce( (prev, curr) => prev + curr.total_sold, 0)
+        count: authorPlayRevs.length,
+        sold: authorPlayRevs.length==0? 0: authorPlayRevs.map(y=> y.total).reduce((a,b)=>a+b)
       }
     })
     .sort( (a, b) => b.sold === a.sold ? b.count - a.count : b.sold - a.sold)
     .slice(0, 5)
     .filter( x => x.count > 0)
     .map( x => {
+      const playsText = x.count ==1? 'play' : 'plays'
       const header = $('<div></div>').addClass('header').text(x.name)
       const meta = $('<div></div>').addClass('meta').append(
-        $('<span></span>').addClass(['right', 'floated']).text(`${x.count} plays`),
-        $('<span></span>').addClass('category').text(`${x.sold} sold`)
+        $('<span></span>').addClass(['right', 'floated']).text(`${x.count} ${playsText}`),
+        $('<span></span>').addClass('category').text(`${x.sold} livres`)
       )
       return $('<li></li>').addClass('item').append(header, meta);
     });
@@ -496,12 +498,15 @@ function renderAuthorPlaySuccessBarChart(author){
   var playsByCurrAuthor = plays.filter( function (play) {
     return play.author == author;
   });
+  var playTitles = playTotals.map(x=>x.title);
+  const authorPlaysWithRev= playsByCurrAuthor.map(play => {
+    return {
+      title: play.title,
+      total: playTitles.indexOf(play.title)==-1? 0:playTotals[playTitles.indexOf(play.title)].total
+    }
+  }).sort((a,b)=> (b.total-a.total));
 
-  playsByCurrAuthor.sort(function (a,b){
-    return b.total_sold - a.total_sold;
-  });
-
-  var topFivePlays = playsByCurrAuthor.slice(0,5);
+  var topFivePlays = authorPlaysWithRev.slice(0,5);
 
   topFivePlays.forEach(function(play){
     play.title = truncate(play.title);
@@ -526,7 +531,7 @@ function renderAuthorPlaySuccessBarChart(author){
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     x.domain(topFivePlays.map(function(d) { return d.title; }));
-    y.domain([0, d3.max(topFivePlays, function(d) { return d.total_sold; })]);
+    y.domain([0, d3.max(topFivePlays, function(d) { return d.total; })]);
 
     svg.append("g")
         .attr("class", "x axis")
@@ -551,47 +556,39 @@ function renderAuthorPlaySuccessBarChart(author){
         .attr("class", "bar")
         .attr("x", function(d) { return x(d.title); })
         .attr("width", 40)
-        .attr("y", function(d) { return y(d.total_sold); })
-        .attr("height", function(d) { return height - y(d.total_sold); });
+        .attr("y", function(d) { return y(d.total); })
+        .attr("height", function(d) { return height - y(d.total); });
 }
 
 function truncate(string){
    if (string.length > 40)
       return string.substring(0,40)+'...';
-   else
-      return string;
+
+   return string;
 };
 
 function renderAuthorPopularityRank(author){
-  var authorPlays = [];
 
-  for (var aut in unique.authors)
-      authorPlays.push({ "name": unique.authors[aut], "total_sold": 0});
-  // console.log(authorPlays[0].fullname);
-  authorPlays.forEach(function(a){
-    var currIndex = authorPlays.indexOf(a);
-    var currAuthorPlayCount = 0;
-      plays.forEach(function(p){
-        if (p.author != null){
-          if (p.author.includes(a.name)){
-            currAuthorPlayCount = currAuthorPlayCount + p.total_sold;
-          }
-        }
-      });
-
-      authorPlays[currIndex] = {"name": a.name, "total_sold": currAuthorPlayCount};
+  var authorPlays = plays.reduce((h, a) => Object.assign(h, { [a.author]:( h[a.author] || [] ).concat(a.title) }), {});
+  var playTitles = playTotals.map(z=> z.title);
+  Object.keys(authorPlays).forEach(function(x) {
+    var curr= authorPlays[x];
+    const total = curr.map(function(y) {
+      var ind = playTitles.indexOf(y)
+      return ind==-1? 0 : playTotals[ind].total;
+    })
+    authorPlays[x]= total.reduce((a,b)=> a+b);
   });
 
-  authorPlays.sort(function (a,b){
-    return b.total_sold - a.total_sold;
-  });
+  var sorted = Object.keys(authorPlays).sort(function(a,b){return authorPlays[b]-authorPlays[a]})
+  var rank = sorted.indexOf(author) + 1
 
-  var rank = authorPlays.findIndex(auth => auth.name == author) + 1;
 
   $("#author-rank").text(rank);
-  const outOf = $('<span></span>').addClass('meta').text(`out of ${authorPlays.length} authors`);
+  const outOf = $('<span></span>').addClass('meta').text(`out of ${sorted.length} authors`);
   $('#author-popularity-outof-label').empty().append(outOf);
 }
+
 
 function renderGenrePieChart(genre) {
   const genrePlays = plays.filter( x => x.genre );
@@ -617,7 +614,7 @@ function renderGenrePieChart(genre) {
     .append('g')
     .attr('transform', `translate(${width / 2}, ${height / 2})`);
 
-  const color = d3.scaleOrdinal([ '#c11900', 'grey']);
+  const color = d3.scaleOrdinal([ '#d62728', 'grey']);
 
   const pie = d3.pie()
     .sort(null)
@@ -1016,9 +1013,14 @@ function topPlaysInSameSession(play){
   })
   var sortVals = function(a,b) {return b[1]-a[1]};
   var data = countArr.sort(sortVals).filter((x,i)=> i<5);
+
   var genreList = data.map(function(x){
     return plays.filter(y=> y.title ==x[0])[0].genre
   })
+
+  data.forEach(function(val){
+    val[0] = truncate(val[0]);
+  });
 
   var colourMap = {}
   genreList.filter((v, i, a) => a.indexOf(v) === i).forEach(function(x,i){
