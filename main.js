@@ -614,6 +614,11 @@ function renderGenrePieChart(genre) {
     .append('g')
     .attr('transform', `translate(${width / 2}, ${height / 2})`);
 
+  var tool_tip = d3.tip()
+        .attr("class", "d3-tip")
+        .html(function(d) { return Math.round(((d.value/genrePlays.length)*100) *100 )/100+ "%" });
+    svg.call(tool_tip);
+
   const color = d3.scaleOrdinal([ '#d62728', 'grey']);
 
   const pie = d3.pie()
@@ -632,19 +637,10 @@ function renderGenrePieChart(genre) {
       .data(pie(data))
     .enter()
       .append('g')
-      .attr('class', 'arc');
-    /*  .on("mouseover", function (d) {
-      d3.select("#genreTooltip")
-      .style("left", d3.event.pageX - 75 + "px")
-      .style("top", d3.event.pageY - 175 + "px")
-      .style("opacity", 0.75)
-      .select("#value")
-      .text(`${Math.round((d.value/genrePlays.length * 100)*100)/100} %`)})
-      .on("mouseout", function () {
-  // Hide the tooltip
-        d3.select("#tooltip")
-        .style("opacity", 0);;
-      });*/
+      .attr('class', 'arc')
+      .on('mouseover', tool_tip.show)
+      .on('mouseout', tool_tip.hide);
+
 
   arc.append('path')
     .attr('d', path)
@@ -715,6 +711,11 @@ function renderRecitalDistribution(play) {
 
   const color = d3.scaleOrdinal(d3.schemeCategory10);
 
+  var tool_tip = d3.tip()
+      .attr("class", "d3-tip")
+      .html(function(d) { return Math.round(d.value * 100) / 100 + "%" });
+  svg.call(tool_tip);
+
   const pie = d3.pie()
     .sort(null)
     .value( function (d) { return d.value; });
@@ -727,19 +728,10 @@ function renderRecitalDistribution(play) {
         .data(pie(data))
         .enter()
         .append('g')
-        .attr('class', 'arc');
-        /*.on("mouseover", function (d) {
-        d3.select("#tooltip")
-        .style("left", d3.event.pageX - 75 + "px")
-        .style("top", d3.event.pageY - 175 + "px")
-        .style("opacity", 0.75)
-        .select("#value")
-        .text(`${Math.round(d.value*100) / 100} %`)})
-        .on("mouseout", function () {
-    // Hide the tooltip
-          d3.select("#tooltip")
-          .style("opacity", 0);;
-        });*/
+        .attr('class', 'arc')
+        .on('mouseover', tool_tip.show)
+        .on('mouseout', tool_tip.hide);
+
 
     arc.append('path')
       .attr('d', path)

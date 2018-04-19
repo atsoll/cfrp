@@ -120,36 +120,16 @@ span.red {
   padding-left: 15px;
 }
 
-#tooltip {
-    position: absolute;
-    width: 200px;
-    height: auto;
-    padding: 10px;
-    background-color: #999;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    z-index: 100 !important;
-
-
-}
-#genreTooltip {
-    position: absolute;
-    width: 200px;
-    height: auto;
-    padding: 10px;
-    background-color: #999;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    z-index: 100 !important;
-
-
-}
-#tooltip.hidden {
-    opacity: 0;
-}
-
 #value {
   color: #000 !important;
+}
+
+.d3-tip {
+      line-height: 1;
+      padding: 6px;
+      background: rgba(128,128,128,0.8);
+      color: #fff;
+      border-radius: 4px;
+      font-size: 12px;
+      z-index:999999;
 }
