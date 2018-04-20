@@ -1,22 +1,22 @@
 {
   "people": {
     "number": 495,
-    "label": "People"
+    "label": "people"
   },
   "plays": {
     "number": 1184,
-    "label": "Plays"
+    "label": "plays"
   },
   "playSales": {
     "number": 337353,
-    "label": "Sales Records"
+    "label": "sales_records"
   },
   "performanceTotals": {
     "number": 63452,
-    "label": "Performances with Totals"
+    "label": "perf_totals"
   },
   "playTotals": {
     "number": 1025,
-    "label": "Plays with Totals"
+    "label": "play_totals"
   }
 }

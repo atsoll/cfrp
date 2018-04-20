@@ -17,6 +17,108 @@ d3.queue()
   .defer(d3.json, 'data/statistics.json')
   .await(loadHandler);
 
+  var resources = {
+      "fr": {
+          "translation": {
+              "home": "Accueil",
+              "loading":"Chargement du site",
+              "people": "Acteurs",
+              "plays":"Pièces",
+              "play_totals": "Pièces et recettes totales",
+              "sales_records": "Dossiers de billets vendus",
+              "perf_totals":"Représentations et recettes",
+              "from": "De:",
+              "to": "À:",
+              "mpp": "Pièces Populaires",
+              "mpa": "Auteurs Populaires",
+              "play_pop_basis": "D'après la somme de ses recettes",
+              "auth_pop_basis": "D'après la somme des recettes de leurs pièces de ce genre",
+              "genre_dist": "Proportion de pièces qui appartiennent à ce genre (en rouge)",
+              "pop_over_time": "Populatité au fil du temps",
+              "genre_time_basis": "D'après le numéro de représentations par année",
+              "pop_rank":"Classement de popularité",
+              "dotw_pop": "Distribution de popularité par jour de la semaine",
+              "ticket_revenue_basis": "D'après les recettes",
+              "session": "Pièces  les plus souvent jouées dans la même soirée",
+              "co-occ": "Selon le numéro de concomitances",
+              "ticket_trend":"Ventes de billets au fil des années",
+              "sale_basis": "Selon le numéro de billets vendus",
+              "auth_rev_basis": "D'après leurs recettes totales parmi les autres auteurs",
+              "plays_written": "Numéro de pièces",
+              "all_seasons": "En toutes saisons",
+              "genre_dist": "Distribution des genres",
+              "dist_basis": "D'après leur numéro de pièces de chaque genre ",
+              "play_succ": "Succès des pièces",
+              "top_5": "Les meilleurs cinq pièces selon les recettes",
+              "play":"Pièce: ",
+              "author": "Auteur: ",
+              "out_of": "de",
+              "play_plur": "pièces",
+              "auth_plur": "auteurs",
+              "Monday": "Lundi",
+              "Tuesday": "Mardi",
+              "Wednesday": "Mercredi",
+              "Thursday": "Jeudi",
+              "Friday": "Vendredi",
+              "Saturday": "Samedi",
+              "Sunday":"Dimanche",
+              "based_rev":"d'après les recettes",
+              "among_genre": "Parmi les œuvres du même genre",
+              "among_author": "Parmi les autres œuvres de"
+          }
+      },
+      "en": {
+          "translation": {
+              "home": "Home",
+              "loading":"Loading",
+              "people":"People",
+              "plays": "Plays",
+              "play_totals": "Plays with totals",
+              "sales_records": "Sales Records",
+              "perf_totals":"Performances with totals",
+              "from":"From:",
+              "to":"To:",
+              "mpp": "Most popular plays",
+              "mpa": "Most popular authors",
+              "play_pop_basis": "Based on total revenue",
+              "auth_pop_basis": "Based on the sum revenue of their plays of this genre",
+              "genre_dist":"Proportion of plays of this genre (red)",
+              "pop_over_time": "Popularity over time",
+              "genre_time_basis": "Based on number of performances each year",
+              "pop_rank": "Popularity rank",
+              "dotw_pop": "Popularity across days of the week",
+              "ticket_revenue_basis":"Based on ticket sale revenue",
+              "session": "Top plays played in the same session",
+              "co-occ":"Based on number of co-occurences",
+              "ticket_trend":"Ticket sale trends over time",
+              "sale_basis":"Based on number of tickets sold",
+              "auth_rev_basis": "Based on total play revenue among other authors",
+              "plays_written": "Number of plays written",
+              "all_seasons": "Across all seasons",
+              "genre_dist": "Genre distribution",
+              "dist_basis": "By their number of plays in each genre",
+              "play_succ":"Play success",
+              "top_5": "Top five plays based on revenue",
+              "play":"Play: ",
+              "author": "Author: ",
+              "out_of": "out of",
+              "play_plur": "plays",
+              "auth_plur": "authors",
+              "Monday": "Monday",
+              "Tuesday": "Tuesday",
+              "Wednesday": "Wednesday",
+              "Thursday": "Thursday",
+              "Friday": "Friday",
+              "Saturday": "Saturday",
+              "Sunday":"Sunday",
+              "based_rev": "based on revenue",
+              "among_genre": "Among works of the same genre",
+              "among_author": "Among works also by"
+          }
+      }
+  };
+
+
 function loadHandler(err, ...data) {
   if (err)
     return console.log('Failed to load data!!!');
@@ -45,6 +147,25 @@ function loadHandler(err, ...data) {
   renderHivePlot();
 
   $('.loader').toggleClass(['active', 'disabled']);
+  $(document).ready(function () {
+      i18n.init({
+          "lng": 'en',
+          "resStore": resources,
+          "fallbackLng" : 'en'
+      }, function (t) {
+          $(document).i18n();
+      });
+
+      $('.lang-flag').click(function () {
+          var lang = $(this).attr('data-lang');
+          i18n.init({
+              lng: lang
+          }, function (t) {
+              $(document).i18n();
+          });
+      });
+  });
+
 }
 
 function initDropDown() {
@@ -108,7 +229,7 @@ function initDropDown() {
 function initStatistics() {
   const newStats = Object.keys(statistics).map( key => {
     const valDiv = $('<div></div>').addClass('value').text(statistics[key].number);
-    const labelDiv = $('<div></div>').addClass('label').text(statistics[key].label);
+    const labelDiv = $('<div></div>').addClass('label').attr("data-i18n", statistics[key].label );
     return $('<div></div>').addClass('statistic').append(valDiv, labelDiv);
   });
   $('.statistics').append(newStats)
@@ -260,14 +381,14 @@ function getAuthorModalFunction(author) {
 
 function getAuthorPopupFunction(author) {
   return function() {
-    const title = $(`<div class="ui green label">Author: ${author}</div>`);
+    const title = $(`<div class="ui green label"></div>`).text(i18n.t("author") + author);
     $('#infoPopup').append(title);
   }
 }
 
 function getPlayModalFunction(play) {
   return function () {
-    $('.modal-title').text("Play: " + play.title);
+    $('.modal-title').text(i18n.t("play") + play.title);
 
     renderPlayRankInGenre(play);
     renderPlayRankByAuthor(play);
@@ -281,7 +402,7 @@ function getPlayModalFunction(play) {
 
 function getPlayPopupFunction(play) {
   return function () {
-    const title = $(`<div class="ui orange label">Play: ${play.title}</div>`);
+    const title = $(`<div class="ui orange label"></div>`).text(i18n.t("play") + play.title);
     const date = $(`<div class="ui black label">${play.dates[0].time.toLocaleDateString()}</div>`);
     $('#infoPopup').append(title, date);
   }
@@ -585,7 +706,7 @@ function renderAuthorPopularityRank(author){
 
 
   $("#author-rank").text(rank);
-  const outOf = $('<span></span>').addClass('meta').text(`out of ${sorted.length} authors`);
+  const outOf = $('<span></span>').addClass('meta').text(i18n.t("out_of") + " " + sorted.length + " "+ i18n.t("auth_plur"));
   $('#author-popularity-outof-label').empty().append(outOf);
 }
 
@@ -657,9 +778,9 @@ function renderPlayRankInGenre(play) {
   const playsOfSameGenre = plays.filter(x=> x.genre == play.genre).map(y=> y.title);
   const rank = playTotals.filter(x => playsOfSameGenre.indexOf(x.title) >= 0).sort(sortBySales).map(x=>x.title).indexOf(play.title) +1;
   const meta = $('<div></div>').addClass('meta').append(
-    $('<span></span>').text(`Among works of the same genre (${play.genre}) - based on revenue`));
+    $('<span></span>').text(`${i18n.t("among_genre")} (${play.genre}) - ${i18n.t("based_rev")}`));
   const toAdd= $('<span></span>').addClass('green').text(rank);
-  const outOf = $('<span></span>').addClass('meta').text(`out of ${playsOfSameGenre.length} plays`);
+  const outOf = $('<span></span>').addClass('meta').text(i18n.t("out_of") + " " + playsOfSameGenre.length + " " + i18n.t("play_plur"));
   $('#playRankGenre').empty().append(meta, toAdd, outOf);
 }
 
@@ -668,9 +789,9 @@ function renderPlayRankByAuthor(play) {
   const playsBySameAuthor = plays.filter(x=>x.author==play.author).map(y=> y.title);
   const rank = playTotals.filter(x => playsBySameAuthor.indexOf(x.title) >=0).sort(sortBySales).map(x=>x.title).indexOf(play.title) +1;
   const meta = $('<div></div>').addClass('meta').append(
-    $('<span></span>').text(`Among works also by ${play.author} - based on revenue`));
+    $('<span></span>').text(`${i18n.t("among_author")} ${play.author} - ${i18n.t("based_rev")}`));
   const toAdd= $('<span></span>').addClass('green').text(rank);
-  const outOf = $('<span></span>').addClass('meta').text(`out of ${playsBySameAuthor.length} plays`);
+  const outOf = $('<span></span>').addClass('meta').text(i18n.t("out_of") + " " + playsBySameAuthor.length + " " + i18n.t("play_plur"));
   $('#playRankAuthor').empty().append(meta, toAdd, outOf);
 }
 
@@ -762,7 +883,7 @@ function renderRecitalDistribution(play) {
            .attr('class', 'legend-key')
            .attr('x', 10)
            .attr('y', 10)
-           .text(function(d) { return d; });
+           .text(function(d) { return i18n.t(d); });
 
 
 

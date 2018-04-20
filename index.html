@@ -15,17 +15,18 @@
   <script src="semantic/semantic.min.js"></script>
   <script src="https://d3js.org/d3.v4.min.js" ></script>
   <script src="d3.hive.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/i18next/1.6.3/i18next-1.6.3.min.js"></script>
   <script src="d3.tip.js"></script>
   <script src="main.js"></script>
 </head>
 <body>
   <!-- Navbar -->
+  <span id="lang-buttons">
+    <img width="35" height="20" src="/img/en-flag.png" class="lang-flag" data-lang="en">
+    <img width="35" height="20" src="/img/fr-flag.png" class="lang-flag" data-lang="fr">
+  </span>
   <div class="ui secondary pointing menu">
-    <div id="label" class="item">
-      <i class="book icon"></i>
-      VisWithUs
-    </div>
-    <a class="item active">Home</a>
+    <a class="item active" data-i18n="home"></a>
   </div>
 
   <!-- Statistics header -->
@@ -41,18 +42,18 @@
     <!-- Date selection -->
     <div id="dateSelect" class="ui two column grid segment" hidden>
       <div class="column">
-          <div>From:</div>
+          <div data-i18n="from"></div>
           <select id="minDate" class="ui scrolling dropdown">
           </select>
       </div>
       <div class="column">
-          <div>To:</div>
+          <div data-i18n="to"></div>
           <select id="maxDate" class="ui scrolling dropdown">
           </select>
       </div>
     </div>
 
-    <div class="ui active text centered inline loader">Loading</div>
+    <div class="ui active text centered inline loader" data-i18n="loading"></div>
     <svg id="hive-plot"></svg>
   </div>
 
@@ -67,7 +68,7 @@
       Comédie-Française Dataset
     </div>
     <div class="content">
-      <div class="ui active text centered inline loader">Loading</div>
+      <div class="ui active text centered inline loader" data-i18n="loading"></div>
       <div class="ui inverted five statistics"></div>
     </div>
     <div class="actions">
@@ -91,20 +92,20 @@
       <div class="ui two doubling cards">
         <div class="card">
           <div class="content">
-            <div class="header">Play Popularity Rank</div>
+            <div class="header" data-i18n="pop_rank"></div>
             <div id="playRankGenre" ></div>
           </div>
         </div>
         <div class="card">
           <div class="content">
-            <div class="header">Play Popularity Rank</div>
+            <div class="header" data-i18n="pop_rank"></div>
             <div id="playRankAuthor" ></div>
           </div>
         </div>
         <div class="card fluid card">
           <div class="content">
-            <div class="header">Popularity across Days of the Week</div>
-            <div class="meta">Based on ticket sale revenue</div>
+            <div class="header" data-i18n="dotw_pop"></div>
+            <div class="meta" data-i18n="ticket_revenue_basis"></div>
             <svg id="playPieChart" style="margin-left: -2.5em"></svg>
             <!--div id="tooltip" class="hidden">
                <p><span id="value"></span></p>
@@ -114,8 +115,8 @@
         </div>
         <div class="ui card fluid card">
           <div class="content" style="overflow:visible">
-            <div class="header">Top plays played in the same session</div>
-            <div class="meta">Based on number of co-occurences</div>
+            <div class="header" data-i18n="session"></div>
+            <div class="meta" data-i18n="co-occ"></div>
             <div id="play-bar-chart"></div>
             <svg id="genreLegend"></svg>
           </div>
@@ -123,8 +124,8 @@
       </div>
       <div class="ui card fluid card">
         <div class="content">
-          <div class="header">Ticket sale trends over time</div>
-          <div class="meta">Based on number of tickets sold</div>
+          <div class="header" data-i18n="ticket_trend"></div>
+          <div class="meta" data-i18n="sale_basis"></div>
           <svg id="ticketSales"></svg>
           <svg id="levelLegend"></svg>
         </div>
@@ -141,16 +142,16 @@
       <div class="ui two doubling cards">
           <div class="card">
             <div class="content">
-              <div class="header">Most Popular Plays</div>
-              <div class="meta">Based on total play revenue</div>
+              <div class="header" data-i18n="mpp"></div>
+              <div class="meta" data-i18n="play_pop_basis"></div>
               <!-- Put top 5 in here -->
               <ol id="top5plays" class="ui ordered list"></ol>
             </div>
           </div>
           <div class="card">
             <div class="content">
-              <div class="header">Most Popular Authors</div>
-              <div class="meta">Based on the sum revenue of their plays of this genre</div>
+              <div class="header" data-i18n="mpa"></div>
+              <div class="meta" data-i18n="auth_pop_basis"></div>
               <!-- Put top 5 in here -->
               <ol id="top5authors" class="ui ordered list"></ol>
             </div>
@@ -160,7 +161,7 @@
         <div class="ui fluid card">
           <div class="content">
             <div class="header">Distribution</div>
-            <div class="meta">Proportion of plays of this genre (red)</div>
+            <div class="meta" data-i18n="genre_dist"></div>
             <!-- Put the svg stuff in here -->
             <svg id="pieChart"></svg>
             <!--div id="genreTooltip" class="hidden">
@@ -170,8 +171,8 @@
         </div>
         <div class="ui fluid card">
           <div class="content">
-            <div class="header">Popularity over time</div>
-            <div class="meta">Based on number of performances each year</div>
+            <div class="header" data-i18n="pop_over_time"></div>
+            <div class="meta" data-i18n="genre_time_basis"></div>
             <!-- Put the svg stuff in here -->
             <svg id="genreLineChart"></svg>
           </div>
@@ -183,21 +184,21 @@
   <div id="authormodal" class="ui basic large modal">
     <i class="close icon"></i>
     <div class="header modal">
-      Author: <span id="authorName">{author}</span>
+      <span data-i18n="author"></span><span id="authorName">{author}</span>
     </div>
     <div class="content">
       <div class="ui cards two column grid">
         <div class="ui card">
           <div class="content">
-            <div class="header">Popularity Rank</div>
-            <div class="meta">Based on total play revenue among other authors</div>
+            <div class="header" data-i18n="pop_rank"></div>
+            <div class="meta" data-i18n="auth_rev_basis"></div>
             <span class="green" id="author-rank">#</span><span style="color: rgba(54, 69, 79, 0.82);"id="author-popularity-outof-label">out of </span>
           </div>
         </div>
         <div class="ui card">
           <div class="content">
-            <div class="header">Number of Plays Written</div>
-            <div class="meta">Across all seasons</div>
+            <div class="header" data-i18n="plays_written"></div>
+            <div class="meta" data-i18n="all_seasons"></div>
             <span class="red" id="num-plays">#</span>
           </div>
         </div>
@@ -206,16 +207,16 @@
       <div class="ui cards two column grid">
         <div class="ui fluid centered card">
           <div class="content">
-            <div class="header">Genre Distribution</div>
-            <div class="meta">Distribution of genres in author's written plays</div>
+            <div class="header" data-i18n="genre_dist"></div>
+            <div class="meta" data-i18n="dist_basis"></div>
             <svg id="author-donut-chart"></svg>
             <svg id="author-donut-chart-legend"></svg>
           </div>
         </div>
         <div class="card">
           <div class="content">
-            <div class="header">Play Success</div>
-            <div class="meta">Top 5 plays based on revenue</div>
+            <div class="header" data-i18n="play_succ"></div>
+            <div class="meta" data-i18n="top_5"></div>
             <div id="author-bar-chart"></div>
           </div>
         </div>

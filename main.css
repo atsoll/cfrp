@@ -133,3 +133,10 @@ span.red {
       font-size: 12px;
       z-index:999999;
 }
+.lang-flag {
+  display: inline-block;
+  margin: 10px 10px 10px 0px;
+}
+#lang-buttons {
+  float: right;
+}
