@@ -1,16 +1,5 @@
-## How to run
+## Project Info
 
-1) Go to this directory `cd simple`
-
-If python 3:
-
-2) Run `python -m http.server`
-
-If python 2:
-
-2) Run `python -m SimpleHTTPServer`
-
-Don't need to restart when files are changed just refresh browser.
-
-Go to [`localhost:8000`](http://localhost:8000)
-
+This visualization is an extension of a group project created for uvic CSC485D spring 2018.
+Collaborators on the original project were Jack Belford and Ryan Samarajeewa.
+It uses the data from the Comédie Française Registers Project (http://cfregisters.org/en/the-data/http-api)
