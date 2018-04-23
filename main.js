@@ -64,7 +64,8 @@ d3.queue()
               "Sunday":"Dimanche",
               "based_rev":"d'après les recettes",
               "among_genre": "Parmi les œuvres du même genre",
-              "among_author": "Parmi les autres œuvres de"
+              "among_author": "Parmi les autres œuvres de",
+              "play_lower": "pièce"
           }
       },
       "en": {
@@ -113,7 +114,8 @@ d3.queue()
               "Sunday":"Sunday",
               "based_rev": "based on revenue",
               "among_genre": "Among works of the same genre",
-              "among_author": "Among works also by"
+              "among_author": "Among works also by",
+              "play_lower": "play"
           }
       }
   };
@@ -409,52 +411,12 @@ function getPlayPopupFunction(play) {
 }
 
 function getGenreModalFunction(genre) {
-  const playsGenre = plays.filter( p => p.genre === genre);
-  const playTitles = playsGenre.map(x=>x.title);
-  const playRev = playTotals.filter(p => playTitles.indexOf(p.title) > -1).sort(((a,b)=> b.total-a.total)).slice(0,5);
-  const top5elems = playRev
-    .map( play => {
-      const header = $('<div></div>').addClass('header').text(play.title)
-      const meta = $('<div></div>').addClass('meta').append(
-        $('<span></span>').addClass(['right', 'floated']).text(`${play.total} livres`),
-        $('<span></span>').addClass('category').text(playsGenre[playTitles.indexOf(play.title)].author)
-      )
-      return $('<li></li>').addClass('item').append(header, meta);
-    });
-
-
-  const top5auths =  unique.authors
-    .map( author => {
-      const authorsPlays = playsGenre.filter( p => p.author === author )
-      const authorPlayRevs = playTotals.filter(p=> authorsPlays.map(x=>x.title).indexOf(p.title) > -1);
-      return {
-        name: author,
-        count: authorPlayRevs.length,
-        sold: authorPlayRevs.length==0? 0: authorPlayRevs.map(y=> y.total).reduce((a,b)=>a+b)
-      }
-    })
-    .sort( (a, b) => b.sold === a.sold ? b.count - a.count : b.sold - a.sold)
-    .slice(0, 5)
-    .filter( x => x.count > 0)
-    .map( x => {
-      const playsText = x.count ==1? 'play' : 'plays'
-      const header = $('<div></div>').addClass('header').text(x.name)
-      const meta = $('<div></div>').addClass('meta').append(
-        $('<span></span>').addClass(['right', 'floated']).text(`${x.count} ${playsText}`),
-        $('<span></span>').addClass('category').text(`${x.sold} livres`)
-      )
-      return $('<li></li>').addClass('item').append(header, meta);
-    });
 
   return function () {
     $('#genreName').text(genre);
-
-    $('#top5plays').empty().append(top5elems);
-    $('#top5authors').empty().append(top5auths);
-
     renderGenrePieChart(genre);
-    renderGenreLineChart(playsGenre);
-
+    renderGenreLineChart(plays.filter( p => p.genre === genre));
+    renderGenreTopFives(genre);
     $('#genremodal').modal('show');
   }
 }
@@ -1280,4 +1242,46 @@ function topPlaysInSameSession(play){
 
 
 
+}
+
+function renderGenreTopFives(genre) {
+  const playsGenre = plays.filter( p => p.genre === genre);
+  const playTitles = playsGenre.map(x=>x.title);
+  const playRev = playTotals.filter(p => playTitles.indexOf(p.title) > -1).sort(((a,b)=> b.total-a.total)).slice(0,5);
+  const top5elems = playRev
+    .map( play => {
+      const header = $('<div></div>').addClass('header').text(play.title)
+      const meta = $('<div></div>').addClass('meta').append(
+        $('<span></span>').addClass(['right', 'floated']).text(`${play.total} livres`),
+        $('<span></span>').addClass('category').text(playsGenre[playTitles.indexOf(play.title)].author)
+      )
+      return $('<li></li>').addClass('item').append(header, meta);
+    });
+
+
+  const top5auths =  unique.authors
+    .map( author => {
+      const authorsPlays = playsGenre.filter( p => p.author === author )
+      const authorPlayRevs = playTotals.filter(p=> authorsPlays.map(x=>x.title).indexOf(p.title) > -1);
+      return {
+        name: author,
+        count: authorPlayRevs.length,
+        sold: authorPlayRevs.length==0? 0: authorPlayRevs.map(y=> y.total).reduce((a,b)=>a+b)
+      }
+    })
+    .sort( (a, b) => b.sold === a.sold ? b.count - a.count : b.sold - a.sold)
+    .slice(0, 5)
+    .filter( x => x.count > 0)
+    .map( x => {
+      const str = x.count==1? 'play_lower': 'play_plur'
+      const header = $('<div></div>').addClass('header').text(x.name)
+      const meta = $('<div></div>').addClass('meta').append(
+        $('<span></span>').addClass(['right', 'floated']).text(`${x.count} ${i18n.t(str)}` ),
+        $('<span></span>').addClass('category').text(`${x.sold} livres`)
+      )
+      return $('<li></li>').addClass('item').append(header, meta);
+    });
+
+    $('#top5plays').empty().append(top5elems);
+    $('#top5authors').empty().append(top5auths);
 }
