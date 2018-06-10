@@ -34,7 +34,7 @@ d3.queue()
               "play_pop_basis": "D'après la somme de ses recettes",
               "auth_pop_basis": "D'après la somme des recettes de leurs pièces de ce genre",
               "genre_dist": "Proportion de pièces qui appartiennent à ce genre (en rouge)",
-              "pop_over_time": "Populatité au fil du temps",
+              "pop_over_time": "Popularité au fil du temps",
               "genre_time_basis": "D'après le numéro de représentations par année",
               "pop_rank":"Classement de popularité",
               "dotw_pop": "Distribution de popularité par jour de la semaine",
